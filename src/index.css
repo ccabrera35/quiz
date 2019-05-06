@@ -1,14 +1,197 @@
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+      monospace;
+  }
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background: rgb(211, 234, 248);
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-family: sans-serif;
+  transition: all 0.5s ease-in;
+  overflow-y: scroll;
+}
+ 
+.container {
+  width: 30rem;
+  background: #fff;
+  border-radius: 10px;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+/* smartphones */
+@media (min-width: 320px) {
+  .container {
+    width: 15rem;
+  }
+  .question {
+    font-size: 14px;
+  }
+  .radioCustomLabel, .questionCount {
+    font-size: 12px;
+  }
+  .retryButton {
+    font-size: 22px;
+  }
+}
+ 
+/* ipads */
+@media (min-width: 768px) {
+  .container {
+    width: 25rem; 
+   }
+   .question {
+    font-size: 16.5px;
+  }
+  .radioCustomLabel, .questionCount {
+    font-size: 14px;
+  }
+
+  .retryButton {
+    font-size: 25px;
+  }
+}
+
+@media(min-width: 1224px) {
+  .container {
+    width: 35rem;
+  }
+  .question {
+    font-size: 20px;
+  }
+  .radioCustomLabel, .questionCount {
+    font-size: 18px;
+  }
+
+  .retryButton {
+    font-size: 28px;
+  }
+}
+
+/* Result Component */
+.result {
+  padding: 1.5rem 2.5rem;
+  margin: 50px;
+  opacity: 0.9;
+}
+ 
+/* Quiz Component */
+.answerOptions {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+ 
+/* QuestionCount Component */
+.questionCount {
+  padding: 1.5rem 2.5rem 0;
+}
+ 
+/* Question Component */
+.question {
+  margin: 0;
+  padding: 0.5rem 2.5rem 1.5rem 2.5rem;
+}
+ 
+/* AnswerOption Component */
+.answerOption {
+  border-top: 1px solid #eee;
+  
+}
+ 
+.answerOption:hover {
+  background-color: #69cbe0;
+}
+ 
+.radioCustomButton {
+    position: absolute;
+    width: auto;
+    opacity: 0;
+}
+ 
+.radioCustomButton,
+.radioCustomLabel {
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+}
+ 
+.radioCustomLabel {
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding: 1.5rem 2.5rem 1.5rem 5rem;
+    line-height: 1.5;
+}
+ 
+.radioCustomButton ~ .radioCustomLabel:before {
+    position: absolute;
+    top: 20px;
+    left: 38px;
+    width: 28px;
+    height: 28px;
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
+    background: #fff;
+    border: 1px solid #bbb;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+.retryButton {
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: transparent;
+  color: white;
+  font-family: sans-serif;
+  padding: 10px 25px;
+  margin: 15px;
+  border: 0.2px solid white;
+  outline: 1px solid rgba(255, 255, 255, 0.7);
+  transition: all .7s;
+}
+
+.retryButton:hover {
+  text-shadow: 0 0 20px rgba(255, 255, 255, 1);
+  box-shadow: inset 0 0 20px rgba(255, 255, 255, .2),
+              0 0 20px rgba(255, 255, 255, 0.3);
+  outline-color: rgba(255, 255, 255, 0);
+  outline-offset: 15px;
+}
+
+/* Button animation */
+.fade-enter {
+    opacity: 0;
+}
+ 
+.fade-enter.fade-enter-active {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out 0.3s;
+}
+ 
+.fade-leave {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+}
+ 
+.fade-leave.fade-leave-active {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+ 
+.fade-appear {
+    opacity: 0;
+}
+ 
+.fade-appear.fade-appear-active {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
 }
