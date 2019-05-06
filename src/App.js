@@ -24,8 +24,6 @@ class App extends Component {
       image: '' 
     };
 
-   handleAnswerSelected = this.handleAnswerSelected.bind(this);
-  
   componentDidMount() {
     const shuffledAnswerOptions = quizQuestions.map((question) => this.shuffleArray(question.answers));
 
@@ -107,7 +105,7 @@ class App extends Component {
       });  
   }
 
-  handleAnswerSelected(event) {
+  handleAnswerSelected = (event) => {
     this.setUserAnswer(event.currentTarget.value);
     if (this.state.questionId < quizQuestions.length) {
         setTimeout(() => this.setNextQuestion(), 300);
