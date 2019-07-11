@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import quizQuestions from './api/quizQuestions';
 import Result from './components/Result';
@@ -6,157 +6,134 @@ import Quiz from './components/Quiz';
 import background from './api/Background';
 import RetryButton from './components/Button';
 
-class App extends Component {
-  state = {
-      counter: 0,
-      questionId: 1,
-      question: '',
-      answerOptions: [],
-      answer: '',
-      answersCount: {
-        Iceland: 0,
-        Belize: 0,
-        NYC: 0,
-        Fiji: 0,
-        Brazil: 0
-      },
-      result: '',
-      image: '' 
-    };
+const App = props => {
+  const [counter, setCounter] = useState(0);
+  const [questionId, setQuestionId] = useState(1);
+  const [question, setQuestion] = useState('');
+  const [answerOptions, setAnswerOptions] =  useState([]);
+  const [answer, setAnswer] = useState('');
+  const [answersCount, setAnswersCount] = useState({
+      Iceland: 0,
+      Belize: 0,
+      NYC: 0,
+      Fiji: 0,
+      Brazil: 0 });
+  const [result, setResult] = useState('');
+  const [image, setImage] = useState('');
 
-  componentDidMount() {
-    const shuffledAnswerOptions = quizQuestions.map((question) => this.shuffleArray(question.answers));
+  useEffect(() => {
+    const shuffledAnswerOptions = quizQuestions.map((question) => shuffleArray(question.answers));
 
     background('beach').then(data => {
-      console.log(data)
-      this.setState({ 
-        image: data[Math.floor(Math.random() * data.length)]
-      }) 
-    })
-
-    this.setState({
-      question: quizQuestions[0].question,
-      answerOptions: shuffledAnswerOptions[0]
+      setImage(data[Math.floor(Math.random() * data.length)])
     });
-  }
+      setQuestion(quizQuestions[0].question);
+      setAnswerOptions(shuffledAnswerOptions[0]);
+  }, []);
   
-  shuffleArray(array) {
+  const shuffleArray = array => {
     let currentIndex = array.length, temporaryValue, randomIndex;
-  
-    // Remaining elements 
+
     while (0 !== currentIndex) {
-  
-      // Random element is picked from the remaining elements
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex -= 1;
   
-      //  Random and current values are swapped
       temporaryValue = array[currentIndex];
       array[currentIndex] = array[randomIndex];
       array[randomIndex] = temporaryValue;
     }
-  
     return array;
   };
 
-  setUserAnswer(answer) {
-    this.setState((state) => ({
-      answersCount: {
-        ...state.answersCount,
-        [answer]: state.answersCount[answer] + 1
-      },
-      answer: answer
-    }));
-  }
-
-  setNextQuestion() {
-    const counter = this.state.counter + 1;
-    const questionId = this.state.questionId + 1;
-    this.setState({
-      counter: counter,
-      questionId: questionId,
-      question: quizQuestions[counter].question,
-      answerOptions: quizQuestions[counter].answers,
-      answer: ''
+  const setUserAnswer = answer => {
+    setAnswersCount({
+      ...answersCount,
+      [answer]: answersCount[answer] + 1
     });
+    setAnswer(answer);
   }
 
-  getResults() {
-    const answersCount = this.state.answersCount;
-    const answersCountKeys = Object.keys(answersCount);
-    const answersCountValues = answersCountKeys.map((key) => answersCount[key]);
+  const setNextQuestion = () => {
+    const count = counter + 1;
+    const id = questionId + 1;
+    setCounter(count);
+    setQuestionId(id);
+    setQuestion(quizQuestions[count].question);
+    setAnswerOptions(quizQuestions[count].answers);
+    setAnswer('');
+  }
+
+  const getResults = () => {
+    const answersCounter = answersCount;
+    const answersCountKeys = Object.keys(answersCounter);
+    const answersCountValues = answersCountKeys.map((key) => answersCounter[key]);
     const maxAnswerCount = Math.max.apply(null, answersCountValues);
   
-    return answersCountKeys.filter((key) => answersCount[key] === maxAnswerCount);
+    return answersCountKeys.filter((key) => answersCounter[key] === maxAnswerCount);
   }
 
-  setResults (result) {
+ const setResults = result => {
     if (result.length === 1) {
-      this.setState({ result: result[0]
-       });
+      result = result[0];
     } else {
-      this.setState({ result: 'Undetermined' });
+      result = 'Undetermined';
     }
-    console.log(this.state.result)
-    background(`${this.state.result}`).then(data => {
-      this.setState({
-        image: data[Math.floor(Math.random() * data.length)]
-        })
+    setResult(result);
+    background(`${result}`).then(data => {
+        setImage(data[Math.floor(Math.random() * data.length)])
       });  
   }
 
-  handleAnswerSelected = (event) => {
-    this.setUserAnswer(event.currentTarget.value);
-    if (this.state.questionId < quizQuestions.length) {
-        setTimeout(() => this.setNextQuestion(), 300);
+  const handleAnswerSelected = event => {
+    setUserAnswer(event.currentTarget.value);
+    if (questionId < quizQuestions.length) {
+        setTimeout(() => setNextQuestion(), 300);
       } else {
-        setTimeout(() => this.setResults(this.getResults()), 300);
+        setTimeout(() => setResults(getResults()), 300);
       }
   }
 
-  reloadQuizHandler() {
+  const reloadQuizHandler = () => {
     window.location.reload() 
   }
 
-  renderQuiz() {
+  const renderQuiz = () => {
     return (
-      <Fragment>
+      <React.Fragment>
         <div className="App-header">What's your next vacation spot?</div>
         <Quiz
-          answer={this.state.answer}
-          answerOptions={this.state.answerOptions}
-          counter={this.state.counter}
-          questionId={this.state.questionId}
-          question={this.state.question}
+          answer={answer}
+          answerOptions={answerOptions}
+          counter={counter}
+          questionId={questionId}
+          question={question}
           questionTotal={quizQuestions.length}
-          onAnswerSelected={this.handleAnswerSelected}
+          onAnswerSelected={handleAnswerSelected}
         />
-      </Fragment>
+      </React.Fragment>
     );
   }
   
-  renderResult() {
+  const renderResult = () => {
     return (
-      <Fragment>
-          <Result quizResult={this.state.result} />
-          <RetryButton reload={this.reloadQuizHandler} />
-      </Fragment>  
+      <React.Fragment>
+          <Result quizResult={result} />
+          <RetryButton reload={reloadQuizHandler} />
+      </React.Fragment>  
     );  
   }
   
-  render() { 
-      document.body.style.backgroundImage = `url(${this.state.image})`;
+  document.body.style.backgroundImage = `url(${image})`;
 
-      return (
-        <Fragment>
+  return (
+    <React.Fragment>
         <div className="App">
-        <div className="App-body">
-        {!this.state.result ? this.renderQuiz() : this.renderResult()}
+            <div className="App-body">
+            {!result ? renderQuiz() : renderResult()}
+            </div>
         </div>
-        </div>
-        </Fragment>
-      )
-  }
+    </React.Fragment>
+  )
 }
 
 
